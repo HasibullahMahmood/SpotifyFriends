@@ -16,6 +16,8 @@ import MyFriendsScreen from '../screens/MyFriendsScreen';
 import MyProfileScreen from '../screens/MyProfileScreen';
 import NewFriendScreen from '../screens/NewFriendScreen';
 import StartupScreen from '../screens/StartupScreen';
+import LoadingScreen from '../screens/LoadingScreen';
+
 import Colors from '../constants/Colors';
 
 import PopupMenu from '../components/UI/PopupMenu';
@@ -127,7 +129,7 @@ const Navigator = createStackNavigator(
               navigation.navigate('Login');
             }}
             onMyProfile={() => {
-              navigation.navigate('MyProfile');
+              navigation.push('MyProfile');
             }}
           />
         );
@@ -138,6 +140,7 @@ const Navigator = createStackNavigator(
 
 const MainNavigator = createSwitchNavigator({
   Startup: StartupScreen,
+  LoadingScreen: LoadingScreen,
   Login: LoginStackNavigator,
   Navigator: Navigator,
 });

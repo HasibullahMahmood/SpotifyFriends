@@ -42,7 +42,7 @@ const StartupScreen = (props) => {
             authActions.authenticate(accessToken, refreshToken, expirationDate),
           );
         }
-        props.navigation.navigate('Chats');
+        props.navigation.navigate('LoadingScreen');
       } catch (error) {
         console.log(error);
       }

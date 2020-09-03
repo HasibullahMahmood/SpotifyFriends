@@ -8,10 +8,14 @@ import {MenuProvider} from 'react-native-popup-menu';
 import AppNavigator from './src/navigations/AppNavigator';
 import authReducer from './src/store/reducers/auth';
 import userReducer from './src/store/reducers/user';
+import savedTracksReducer from './src/store/reducers/savedTracks';
+import locationReducer from './src/store/reducers/location';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
+  savedTracks: savedTracksReducer,
+  location: locationReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

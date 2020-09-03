@@ -100,25 +100,30 @@ export const saveDataToStorage = async (
 };
 
 export const refreshLogin = async (refreshToken) => {
-  try {
-    const result = await refresh(spotifyAuthConfig, {
-      refreshToken: refreshToken,
-    });
-    console.log(result);
-    dispatch(
-      authenticate(
+  return async (dispatch) => {
+    try {
+      const result = await refresh(spotifyAuthConfig, {
+        refreshToken: refreshToken,
+      });
+      dispatch(
+        authenticate(
+          result.accessToken,
+          result.refreshToken,
+          result.accessTokenExpirationDate,
+        ),
+      );
+      saveDataToStorage(
         result.accessToken,
         result.refreshToken,
         result.accessTokenExpirationDate,
-      ),
-    );
-    saveDataToStorage(
-      result.accessToken,
-      result.refreshToken,
-      result.accessTokenExpirationDate,
-    );
-    return result;
-  } catch (error) {
-    return 'error';
-  }
+      );
+      console.log('refresh token succeed');
+      console.log(result);
+      return result;
+    } catch (error) {
+      console.log('Error occurred while refreshing token');
+      console.log(error);
+      return 'error';
+    }
+  };
 };

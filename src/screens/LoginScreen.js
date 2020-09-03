@@ -26,7 +26,7 @@ const LoginScreen = (props) => {
     setIsLoading(false);
 
     if (accessToken != null) {
-      props.navigation.navigate('Chats');
+      props.navigation.navigate('LoadingScreen');
     }
   };
 
