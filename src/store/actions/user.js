@@ -3,7 +3,7 @@ import axios from 'axios';
 export const SET_CURRENT_USER_PROFILE = 'SET_CURRENT_USER_PROFILE';
 
 export const getCurrentUserProfile = (accessToken) => {
-  return (dispatch) => {
+  return async (dispatch) => {
     let headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -14,7 +14,7 @@ export const getCurrentUserProfile = (accessToken) => {
       url: 'https://api.spotify.com/v1/me',
       headers: headers,
     };
-    axios(options)
+    await axios(options)
       .then((response) => {
         let res = JSON.parse(response.request._response);
 
@@ -40,8 +40,8 @@ export const getCurrentUserProfile = (accessToken) => {
 };
 
 const postUserProfileToFirebase = (data) => {
-  return (dispatch) => {
-    axios
+  return async (dispatch) => {
+    await axios
       .put(
         `https://spotifyfriends-d6f2a.firebaseio.com/users/${data.spotifyUserId}.json`,
         data,

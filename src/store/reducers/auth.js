@@ -16,6 +16,10 @@ export default (state = initialState, action) => {
       };
     case LOGOUT:
       return {accessToken: null, refreshToken: null, expirationDate: null};
+    case 'ERROR':
+      console.log('Error is called');
+      console.log(action);
+      return state;
     default:
       return state;
   }

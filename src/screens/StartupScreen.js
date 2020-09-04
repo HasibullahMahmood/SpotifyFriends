@@ -31,19 +31,36 @@ const StartupScreen = (props) => {
         // if accessToken expired, then refresh the accessToken
         const currentDate = new Date().getTime();
         const expiryDate = new Date(expirationDate).getTime();
+
         if (expiryDate < currentDate) {
           const result = await authActions.refreshLogin(refreshToken);
+
           if (result === 'error') {
             props.navigation.navigate('Login', {doILogout: false});
             return;
+          } else {
+            dispatch(
+              authActions.authenticate(
+                result.accessToken,
+                result.refreshToken,
+                result.accessTokenExpirationDate,
+              ),
+            );
+            authActions.saveDataToStorage(
+              result.accessToken,
+              result.refreshToken,
+              result.accessTokenExpirationDate,
+            );
+            props.navigation.navigate('LoadingScreen');
           }
         } else {
           await dispatch(
             authActions.authenticate(accessToken, refreshToken, expirationDate),
           );
+          props.navigation.navigate('LoadingScreen');
         }
-        props.navigation.navigate('LoadingScreen');
       } catch (error) {
+        console.log('Error loading storage');
         console.log(error);
       }
     };

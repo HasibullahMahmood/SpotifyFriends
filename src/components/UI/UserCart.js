@@ -2,16 +2,28 @@ import React from 'react';
 import {View, Image, TouchableOpacity, Text, StyleSheet} from 'react-native';
 
 const UserCart = (props) => {
-  return (
-    <TouchableOpacity style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image
-          style={styles.image}
-          source={{
-            uri: props.imageUrl,
-          }}
-        />
+  let image = (
+    <Image
+      style={styles.image}
+      source={{
+        uri: props.imageUrl,
+      }}
+    />
+  );
+
+  if (!props.imageUrl) {
+    let str = props.name;
+    let matches = str.match(/\b(\w)/g);
+    let acronym = matches.join('');
+    image = (
+      <View style={styles.imageTextContainer}>
+        <Text style={styles.imageText}>{acronym.toUpperCase()}</Text>
       </View>
+    );
+  }
+  return (
+    <TouchableOpacity style={styles.container} onPress={props.onClick}>
+      <View style={styles.imageContainer}>{image}</View>
       <View style={styles.textsContainer}>
         <View style={styles.nameContainer}>
           <Text style={styles.name}>{props.name}</Text>
@@ -29,13 +41,14 @@ const styles = StyleSheet.create({
   container: {
     width: '95%',
     flexDirection: 'row',
-    marginBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
     elevation: 5,
     height: 70,
     borderRadius: 10,
+    marginHorizontal: 10,
+    marginVertical: 5,
   },
   imageContainer: {
     alignItems: 'center',
@@ -70,6 +83,19 @@ const styles = StyleSheet.create({
   number: {
     color: 'red',
     fontWeight: 'bold',
+  },
+  imageText: {
+    fontSize: 20,
+    width: 60,
+    height: 60,
+    textAlign: 'center',
+    paddingTop: 15,
+  },
+  imageTextContainer: {
+    backgroundColor: '#8f8e8c',
+    borderRadius: 30,
+    borderColor: '#eee',
+    borderWidth: 1,
   },
 });
 

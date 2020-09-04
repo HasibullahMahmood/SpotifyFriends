@@ -17,6 +17,7 @@ import MyProfileScreen from '../screens/MyProfileScreen';
 import NewFriendScreen from '../screens/NewFriendScreen';
 import StartupScreen from '../screens/StartupScreen';
 import LoadingScreen from '../screens/LoadingScreen';
+import ImageScreen from '../screens/ImageScreen';
 
 import Colors from '../constants/Colors';
 
@@ -53,7 +54,6 @@ const MyFriendsStackNavigator = createStackNavigator({
 
 const FindNewFriendsStackNavigator = createStackNavigator({
   FindNewFriends: FindNewFriendsScreen,
-  NewFriend: NewFriendScreen,
 });
 
 const tabConfig = {
@@ -110,6 +110,8 @@ const Navigator = createStackNavigator(
   {
     AppTab: AppTabNavigator,
     MyProfile: MyProfileScreen,
+    NewFriendScreen: NewFriendScreen,
+    ImageScreen: ImageScreen,
   },
   {
     defaultNavigationOptions: ({navigation}) => ({
