@@ -10,6 +10,9 @@ import authReducer from './src/store/reducers/auth';
 import userReducer from './src/store/reducers/user';
 import savedTracksReducer from './src/store/reducers/savedTracks';
 import locationReducer from './src/store/reducers/location';
+import * as database from './src/utils/database';
+
+database.initializeDB();
 
 const rootReducer = combineReducers({
   auth: authReducer,

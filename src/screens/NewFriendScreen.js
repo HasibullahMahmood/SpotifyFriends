@@ -1,9 +1,14 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 import CustomButtom from '../components/UI/CustomButton';
+import * as database from '../utils/database';
+import {useSelector} from 'react-redux';
 
 const NewFriendsScreen = (props) => {
-  const userData = props.navigation.getParam('data');
+  let userData = props.navigation.getParam('data');
+  const myId = useSelector((state) => state.user.spotifyUserId);
+  const [isStartButtonPressed, setIsStartButtonPressed] = useState(false);
+  const [chatId, setChatId] = useState();
 
   let source = {source: {uri: userData.image}, type: 1};
   let style = styles.image;
@@ -16,6 +21,19 @@ const NewFriendsScreen = (props) => {
     props.navigation.push('ImageScreen', {source: source});
   };
 
+  const startChatHandler = async () => {
+    let x;
+    if (!isStartButtonPressed) {
+      x = await database.addNewChat([myId, userData.userId], '');
+      setChatId(x);
+      setIsStartButtonPressed(true);
+    }
+
+    props.navigation.navigate('ChatScreen', {
+      userData: {...userData, chatId: x ? x : chatId},
+    });
+  };
+
   return (
     <View style={styles.screen}>
       <TouchableOpacity onPress={imagePressHandler}>
@@ -24,7 +42,7 @@ const NewFriendsScreen = (props) => {
       <View style={styles.locationContainer}>
         <Text style={styles.locationText}>Location here!</Text>
       </View>
-      <CustomButtom>Start Chat</CustomButtom>
+      <CustomButtom onPress={startChatHandler}>Start Chat</CustomButtom>
     </View>
   );
 };

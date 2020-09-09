@@ -1,5 +1,6 @@
+// @refresh reset
 import React, {useEffect, useState, useCallback} from 'react';
-import {View, Text, StyleSheet, Alert} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import Axios from 'axios';
 
@@ -7,6 +8,7 @@ import {getMutuals, getLocations, getDistance} from '../utils/Calculator';
 import UserCart from '../components/UI/UserCart';
 import {FlatList} from 'react-native-gesture-handler';
 import LoadingIndicator from '../components/UI/LoadingIndicator';
+import * as database from '../utils/database';
 
 const FindNewFriendsScreen = (props) => {
   const myId = useSelector((state) => state.user.spotifyUserId);
@@ -33,7 +35,16 @@ const FindNewFriendsScreen = (props) => {
     return distances;
   };
 
-  const prepareSuggestedFriends = useCallback((distances) => {
+  const prepareSuggestedFriends = useCallback(async (distances) => {
+    distances = await database.deleteMyFriendsFromSelectedUsers(
+      myId,
+      distances,
+    );
+    // if there is no element in distances list, it meanse show alert
+    if (distances.length === 0) {
+      setSuggestedFriendsLength(0);
+      return;
+    }
     distances.forEach(async (obj) => {
       try {
         let response = await Axios.get(
@@ -46,9 +57,6 @@ const FindNewFriendsScreen = (props) => {
         };
 
         setSuggestedFriends((prevState) => [...prevState, suggestedFriend]);
-        if (suggestedFriends.length === 0) {
-          setIsSearching(false);
-        }
       } catch (error) {
         console.log('Error getting user data');
         console.log(error);
@@ -56,7 +64,20 @@ const FindNewFriendsScreen = (props) => {
     });
   }, []);
 
+  const refreshSuggestedFriends = (userId) => {
+    setSuggestedFriends((prevSuggestedFriends) => {
+      let newList = prevSuggestedFriends.filter((suggestedFriend) => {
+        return suggestedFriend.userId != userId;
+      });
+      if (newList.length === 0) {
+        setSuggestedFriendsLength(0);
+      }
+      return newList;
+    });
+  };
+
   useEffect(() => {
+    let listener;
     (async () => {
       setIsSearching(true);
       const mutuals = await getMutuals(mySavedTracks, myId);
@@ -64,28 +85,38 @@ const FindNewFriendsScreen = (props) => {
       const distances = calculateDistances(myLocation, locations);
       distances.sort((a, b) => a.distance.localeCompare(b.distance));
       await prepareSuggestedFriends(distances);
+      listener = await database.attachListenerToFriendAdded(
+        myId,
+        refreshSuggestedFriends,
+      );
       setIsSearching(false);
-      setSuggestedFriendsLength(locations.length);
     })();
+
+    return () => {
+      database.detachListenerToFriendAdded(myId, listener);
+    };
   }, []);
 
   if (isSearching) {
     return <LoadingIndicator>Searching New Friends</LoadingIndicator>;
   }
   if (suggestedFriendsLength == 0) {
-    Alert.alert(
-      '',
-      "Sorry, couldn't find enough liked mutual songs. Please like more songs on Spotify to find new friends.",
-    );
     return (
       <View style={styles.messageContainer}>
-        <Text style={styles.messageText}>No data to preview.</Text>
+        <Text style={styles.messageText}>
+          Sorry, couldn't find enough liked mutual songs.
+        </Text>
+        <Text style={styles.messageText}>
+          Please like more songs on Spotify to find new friends.
+        </Text>
       </View>
     );
   }
 
   const onClickHandler = (data) => {
-    props.navigation.push('NewFriendScreen', {data: data});
+    props.navigation.push('NewFriendScreen', {
+      data: data,
+    });
   };
   return (
     <FlatList

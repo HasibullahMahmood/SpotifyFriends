@@ -45,7 +45,6 @@ const LoginStackNavigator = createStackNavigator(
 
 const ChatsStackNavigator = createStackNavigator({
   Chats: ChatsScreen,
-  Chat: ChatScreen,
 });
 
 const MyFriendsStackNavigator = createStackNavigator({
@@ -112,6 +111,7 @@ const Navigator = createStackNavigator(
     MyProfile: MyProfileScreen,
     NewFriendScreen: NewFriendScreen,
     ImageScreen: ImageScreen,
+    ChatScreen: ChatScreen,
   },
   {
     defaultNavigationOptions: ({navigation}) => ({
